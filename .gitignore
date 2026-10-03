@@ -1,0 +1,28 @@
+# Rust
+/target/
+**/target/
+Cargo.lock.bak
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Frontend
+frontend/**/node_modules/
+frontend/**/dist/
+frontend/**/.next/
+frontend/**/build/
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Logs
+*.log
+
+# Uploaded/generated artifacts (do not commit real student documents)
+/uploads/
+/tmp/
