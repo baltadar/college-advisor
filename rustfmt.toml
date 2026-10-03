@@ -1,0 +1,5 @@
+# Explicit formatting configuration so "correct formatting" means the
+# same thing on every machine and in CI, not whatever the local
+# rustfmt's default happens to be.
+edition = "2021"
+max_width = 100

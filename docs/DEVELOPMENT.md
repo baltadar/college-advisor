@@ -19,12 +19,16 @@ From the repository root:
 ```bash
 cargo check --workspace     # type-check everything, fast
 cargo test --workspace      # run all tests
-cargo fmt --check           # formatting check (Chunk 0.3+)
-cargo clippy --workspace    # linting (Chunk 0.3+)
+cargo fmt --check           # formatting check
+cargo clippy --workspace    # linting
 ```
 
-`cargo fmt` and `cargo clippy` aren't configured yet, that's Chunk 0.3.
-Until then, only `check` and `test` are expected to be run.
+All four are expected to pass before a chunk is considered done. Formatting
+rules live in `rustfmt.toml` at the repo root. Lint policy lives in the
+`[workspace.lints]` tables in the root `Cargo.toml`; each crate opts in
+with `[lints]\nworkspace = true` in its own `Cargo.toml`, a new crate that
+forgets this line will silently not be linted, so this is worth checking
+when adding one.
 
 ## Environment configuration
 

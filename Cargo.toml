@@ -7,3 +7,16 @@ members = [
 
 [workspace.package]
 edition = "2021"
+
+[workspace.lints.rust]
+# Unsafe Rust is avoided project-wide unless there is a documented,
+# compelling reason (see docs/SECURITY.md and docs/DECISIONS.md). Using
+# "deny" rather than "forbid" so a justified exception can still be made
+# explicit and visible at the call site with #[allow(unsafe_code)] plus
+# a comment, rather than requiring a workspace-wide policy change.
+unsafe_code = "deny"
+
+[workspace.lints.clippy]
+# Explicit rather than relying on the implicit default, so the intent is
+# documented here rather than assumed.
+all = "warn"

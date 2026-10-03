@@ -52,3 +52,31 @@ a mechanical constraint.
 contents (shared error types, common DTOs, etc.) are decided later, by
 whichever chunk first needs to share something across crates, not by
 this decision.
+
+---
+
+## ADR 0004: Lint and formatting policy, kept deliberately minimal for now
+
+**Date:** Phase 0, Chunk 0.3
+**Context:** The master instructions require `cargo fmt --check` and
+`cargo clippy --workspace` to pass, with "appropriate compiler
+warnings," but with no real application code yet, there's nothing to
+validate an opinionated, detailed lint policy against.
+**Decision:** Two rules only, chosen because they're directly justified
+by principles already stated in `SECURITY.md`/the master instructions
+rather than invented here:
+- `unsafe_code = "deny"` (workspace Rust lint) — the project avoids
+  unsafe Rust unless there's a documented, compelling reason; `deny`
+  still allows a justified, visible `#[allow(unsafe_code)]` at a
+  specific call site, rather than requiring a workspace-wide exception.
+- `clippy::all = "warn"` (workspace Clippy lint) — made explicit rather
+  than left as an implicit default, so the intent is documented.
+Formatting is pinned via `rustfmt.toml` (`edition = "2021"`,
+`max_width = 100`) so "correctly formatted" doesn't depend on whichever
+rustfmt defaults happen to ship locally or in CI.
+**Consequences:** Stricter lint groups (`clippy::pedantic`,
+`clippy::unwrap_used`, etc.) are deliberately not enabled yet. Adding
+them now, before real business logic exists, risks tuning them against
+nothing. Revisit once a real crate (e.g. `auth` or `eligibility`) has
+enough code to judge whether a stricter policy is actually useful or
+just noisy, and log that as a new ADR rather than editing this one.
