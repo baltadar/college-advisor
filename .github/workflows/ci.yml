@@ -8,7 +8,10 @@ on:
 jobs:
   check-format-lint-test:
     name: fmt, check, test, clippy
-    runs-on: ubuntu-latest
+    # Pinned rather than "ubuntu-latest": GitHub has announced ubuntu-latest
+    # migrates to Ubuntu 26 on 2026-10-19, and an unannounced OS change
+    # underneath CI is exactly the kind of silent drift this project avoids.
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
