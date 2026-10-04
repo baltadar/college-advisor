@@ -80,3 +80,25 @@ them now, before real business logic exists, risks tuning them against
 nothing. Revisit once a real crate (e.g. `auth` or `eligibility`) has
 enough code to judge whether a stricter policy is actually useful or
 just noisy, and log that as a new ADR rather than editing this one.
+
+---
+
+## ADR 0005: CI toolchain pinned; Clippy warnings fail CI but not local dev
+
+**Date:** Phase 0, Chunk 0.4
+**Context:** GitHub Actions' `ubuntu-latest` runners ship a recent stable
+Rust via `rustup`, which would be newer than the 1.75.0 available in
+local development (ADR 0002). Running different versions locally and in
+CI risks "works on my machine" drift, including Clippy lint sets
+changing between versions.
+**Decision:**
+- Pin CI to the exact same toolchain as local dev, Rust 1.75.0 with the
+  `rustfmt` and `clippy` components, via `dtolnay/rust-toolchain@1.75.0`.
+- Run `cargo clippy --workspace --all-targets -- -D warnings` in CI,
+  turning warnings into failures, while local development only runs
+  plain `cargo clippy --workspace` (warnings visible, not blocking).
+**Consequences:** Local iteration stays fast and unblocked by lint
+nitpicks; nothing with a Clippy warning can reach `main` unnoticed.
+When the toolchain is deliberately upgraded (see ADR 0002), this
+workflow's pinned version must be updated in the same change, or CI and
+local dev will silently drift apart again.

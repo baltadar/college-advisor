@@ -17,11 +17,16 @@
 From the repository root:
 
 ```bash
-cargo check --workspace     # type-check everything, fast
-cargo test --workspace      # run all tests
-cargo fmt --check           # formatting check
-cargo clippy --workspace    # linting
+cargo check --workspace            # type-check everything, fast
+cargo test --workspace             # run all tests
+cargo fmt --all -- --check         # formatting check, all workspace members
+cargo clippy --workspace --all-targets -- -D warnings   # linting, same as CI
 ```
+
+`--all` on `cargo fmt` is deliberate: in a virtual-manifest workspace like
+this one, the plain `cargo fmt --check` can be ambiguous about which
+package it's checking as more crates are added. `--all -- --check` always
+checks every workspace member, with no ambiguity.
 
 All four are expected to pass before a chunk is considered done. Formatting
 rules live in `rustfmt.toml` at the repo root. Lint policy lives in the
@@ -45,6 +50,16 @@ Current variables (see `.env.example`):
   server exists until Phase 1)
 - `JWT_SECRET` (commented out) — set once authentication is introduced
   in Phase 3
+
+## Continuous Integration
+
+Every push and every pull request against `main` runs
+`.github/workflows/ci.yml` on GitHub Actions: formatting, type-check,
+tests, and Clippy, using a Rust toolchain pinned to the same version
+used in local development (see `DECISIONS.md` ADR 0002). Locally,
+Clippy warnings don't fail the command; in CI they do (`-D warnings`),
+so cleanup is enforced before merge without slowing down local
+iteration. See ADR 0005.
 
 ## Local database
 

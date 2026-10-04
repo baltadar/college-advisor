@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+    branches: [main]
+
+jobs:
+  check-format-lint-test:
+    name: fmt, check, test, clippy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Pinned to match the toolchain used in local development (see
+      # docs/DECISIONS.md ADR 0002), so "passes in CI" and "passes
+      # locally" mean the same thing.
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@1.75.0
+        with:
+          components: rustfmt, clippy
+
+      - name: Cache Cargo
+        uses: Swatinem/rust-cache@v2
+
+      - name: Formatting (cargo fmt --check)
+        run: cargo fmt --all -- --check
+
+      - name: Type-check (cargo check --workspace)
+        run: cargo check --workspace
+
+      - name: Tests (cargo test --workspace)
+        run: cargo test --workspace
+
+      - name: Lint (cargo clippy --workspace)
+        # Warnings fail CI even though they only warn locally, so cleanup
+        # is enforced before merge without slowing down local iteration.
+        # See docs/DECISIONS.md ADR 0005.
+        run: cargo clippy --workspace --all-targets -- -D warnings
